@@ -3,6 +3,7 @@ var config = require('./mqconfig');
 var exec = require ('child_process').exec;
 var http = require('http');
 var winston = require('winston');
+var fs = require('fs');
 
 winston.add(winston.transports.File, { filename: config.logfile, timestamp: true, json: false, maxsize: 1024*1024*10, maxFiles: 10 });
 //var client = http.createClient(config.destination.port, config.destination.host);
@@ -33,4 +34,12 @@ cronJob(config.cron, function(){
 	exec(config.command, function(err, stdout, stderr){
 		transmit(config.destination, stdout);
 	});
+
+	/*
+	fs.readFile("/Users/fittom/temp/monitr-2012-04-08_22-17-28.log", function(err,data){
+		if(err) throw err;
+		transmit(config.destination, data);
+	});
+	*/
+
 });
