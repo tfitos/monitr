@@ -11,5 +11,6 @@ module.exports =
 	auth: {
 		name: "name",
 		pass: "pass"
-	}
+	},
+	logfile: "monitr-transmitter.log"
 }

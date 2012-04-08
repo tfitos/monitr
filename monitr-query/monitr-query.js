@@ -16,16 +16,16 @@ function transmit(options, data){
 			//console.log(chunk);
 		});
 		res.on("end", function(){
-			winston.log("debug", "data sent; status: " + res.statusCode);
+			winston.log("info", "data sent; status: " + res.statusCode);
 		});
 	});
 
 	req.on("error", function(e) {
 		winston.log("error", "problem with request: " + e.message);
 	});
+	winston.log("debug", "Sending data:\n" + data);
 	req.write(data);
 	req.end();
-
 }
 
 

@@ -1,21 +1,24 @@
 var http = require('http');
 var util = require('util');
 var config = require('./mtconfig');
+var winston = require('winston');
+
+winston.add(winston.transports.File, { filename: config.logfile, timestamp: true, json: false, maxsize: 1024*1024*10, maxFiles: 10 });
 
 function transmit(options, data){
 
 	var req = http.request(options, function (res) {
 		res.setEncoding("utf-8");
 		res.on("data", function(chunk){
-			console.log(chunk);
+			//console.log(chunk);
 		});
 		res.on("end", function(){
-			console.log("status: " + res.statusCode);
+			winston.log("info", "data transmitted; status: " + res.statusCode);
 		});
 	});
 
 	req.on("error", function(e) {
-		console.log("problem with request: " + e.message);
+		winston.log("error","problem with request: " + e.message);
 	});
 	var body = {
 		name: config.auth.name,
@@ -33,7 +36,7 @@ http.createServer(function(req, res) {
 	//console.log(util.inspect(request.body));
 	req.on('data', function(chunk) {
 		//console.log("==== DATA ====")
-        console.log(chunk.toString());
+        winston.log("debug", chunk.toString());
 		data += chunk.toString();
     });
     
