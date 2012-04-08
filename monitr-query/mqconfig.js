@@ -8,5 +8,6 @@ module.exports =
 				port: 3000,
 				path: "/",
 				method: "PUT"
-			}
+			},
+			logfile: "monitr-query.log"
 		}
