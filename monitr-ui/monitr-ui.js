@@ -1,6 +1,11 @@
 var http = require('http');
 var util = require('util');
 var config = require('./muconfig');
+var fs = require('fs');
+var winston = require('winston');
+
+winston.add(winston.transports.File, { filename: config.logfile, timestamp: true, json: false, maxsize: 1024*1024*10, maxFiles: 10 });
+
 
 http.createServer(function(req, res) {
 	//console.log(util.inspect(req));
@@ -17,17 +22,40 @@ http.createServer(function(req, res) {
 			try{
 				json = JSON.parse(data);
 			}catch(err){
-				console.log("ERR: " + err.message);
+				winston.log('error', 'ERR: ' + err.message);
+				//console.log("ERR: " + err.message);
 			}
 			if(json && json.name && json.pass && json.name == config.auth.name && json.pass == config.auth.pass){
-				console.log("AUTH succeeded");
+				winston.log('debug', 'AUTH succeeded');
+				//console.log("AUTH succeeded");
+				fs.writeFile(config.filepath, json.data, function(err){
+					if(err) {winston.log('error', 'ERR: '+ err.message);}
+					else{
+						winston.log('info', "data stored to " + config.filepath);
+					}
+				});
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.end();
 			}else{
-				console.log("AUTH failed or not valid json in body");
+				winston.log('warn', "AUTH failed or not valid json in body");
+				res.writeHead(403, "Forbidden", {'Content-Type': 'text/html'});
+				res.end();
 			}
+		}else if (req.method == "GET"){
+			winston.log('debug', "Incoming GET request");
+			fs.readFile(config.filepath, function(err, data){
+				if(err) {
+					winston.log("error", "ERR: " + err.message);
+					res.writeHead(500, "Internal Server Error", {'Content-Type': 'text/html'});
+					res.end();
+				}else{
+					//console.log(data.toString());
+					res.write(data.toString());
+					//res.writeHead(200, "OK", {'Content-Type': 'text/plain'});
+					res.end();
+				}
+			});
 		}
 		data = "";
-      // empty 200 OK response for now
-    	res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-    	res.end();
     });
-}).listen(3001);
+}).listen(config.port);

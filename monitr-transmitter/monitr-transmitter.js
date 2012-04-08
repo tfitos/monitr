@@ -22,8 +22,8 @@ function transmit(options, data){
 		pass: config.auth.pass,
 		data: data
 	};
-	//req.write(JSON.stringify(body));
-	req.write("a{A{A{A{{A{{AAAA{{{");
+	req.write(JSON.stringify(body));
+	//req.write("");
 	req.end();
 
 }
