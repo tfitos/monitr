@@ -17,24 +17,33 @@ function transmit(options, data){
 	req.on("error", function(e) {
 		console.log("problem with request: " + e.message);
 	});
-	req.write(data);
+	var body = {
+		name: config.auth.name,
+		pass: config.auth.pass,
+		data: data
+	};
+	//req.write(JSON.stringify(body));
+	req.write("a{A{A{A{{A{{AAAA{{{");
 	req.end();
 
 }
 
 http.createServer(function(req, res) {
+	var data = "";
 	//console.log(util.inspect(request.body));
 	req.on('data', function(chunk) {
 		//console.log("==== DATA ====")
         console.log(chunk.toString());
-		if(config.destination){
-			transmit(config.destination, chunk.toString());
-		}
+		data += chunk.toString();
     });
     
     req.on('end', function() {
       // empty 200 OK response for now
-      res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+	  if(config.destination){
+	  	transmit(config.destination, data);
+	  }
+	  data = "";
+      res.writeHead(200, "OK", {'Content-Type': 'application/json'});
       res.end();
     });
 }).listen(config.port);

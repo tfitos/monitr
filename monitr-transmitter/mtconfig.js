@@ -7,5 +7,9 @@ module.exports =
 		port: 3001,
 		path: "/monitr-ui",
 		method: "PUT"
+	}, 
+	auth: {
+		name: "name",
+		pass: "pass"
 	}
 }
