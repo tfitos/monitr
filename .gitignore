@@ -1,3 +1,7 @@
 *.swp
 *.log
 store/data.txt
+monitr-query/node_modules
+monitr-transmitter/node_modules
+monitr-ui/node_modules
+
