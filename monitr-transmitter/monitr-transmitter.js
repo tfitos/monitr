@@ -6,6 +6,13 @@ var winston = require('winston');
 winston.add(winston.transports.File, { filename: config.logfile, timestamp: true, json: false, maxsize: 1024*1024*10, maxFiles: 10 });
 
 function transmit(options, data){
+	var body = {
+		name: config.auth.name,
+		pass: config.auth.pass,
+		data: data
+	};
+	var bodyStr = JSON.stringify(body);
+	options.headers = { 'Content-length': Buffer.byteLength(bodyStr,'utf8')};
 
 	var req = http.request(options, function (res) {
 		res.setEncoding("utf-8");
@@ -20,12 +27,7 @@ function transmit(options, data){
 	req.on("error", function(e) {
 		winston.log("error","problem with request: " + e.message);
 	});
-	var body = {
-		name: config.auth.name,
-		pass: config.auth.pass,
-		data: data
-	};
-	req.write(JSON.stringify(body));
+	req.write(bodyStr);
 	//req.write("");
 	req.end();
 
@@ -43,7 +45,8 @@ http.createServer(function(req, res) {
     req.on('end', function() {
       // empty 200 OK response for now
 	  if(config.destination){
-	  	transmit(config.destination, data);
+		var options = config.destination;
+	  	transmit(options, data);
 	  }
 	  data = "";
       res.writeHead(200, "OK", {'Content-Type': 'application/json'});

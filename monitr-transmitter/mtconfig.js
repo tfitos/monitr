@@ -3,9 +3,9 @@ module.exports =
 {
 	port: 3000,
 	destination: {
-		host: "localhost",
-		port: 3001,
-		path: "/monitr-ui",
+		host: "tamas.fitos.hu",
+		port: 80,
+		path: "/monitr",
 		method: "PUT"
 	}, 
 	auth: {
